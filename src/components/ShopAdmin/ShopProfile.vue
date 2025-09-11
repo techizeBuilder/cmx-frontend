@@ -143,8 +143,8 @@
               </div>
               <v-img
                 v-if="shopLogoImgConfig.success"
-                :src="`${shopProfileDetails.shopLogo}`"
-                :lazy-src="`${shopProfileDetails.shopLogo}`"
+                :src="`${apiUrl}${shopProfileDetails.shopLogo}`"
+                :lazy-src="`${apiUrl}${shopProfileDetails.shopLogo}`"
                 max-width="150"
                 max-height="150"
                 width="150"
@@ -183,7 +183,7 @@
       </v-container>
     </template>
 
-    <template #content-2>
+    <!-- <template #content-2>
       <v-container v-if="currentTab === 3" ref="tabContentRefs[2]" class="pa-0" style="margin-top:0;padding-top:0;">
         <v-row justify="center" class="my-4">
           <v-col
@@ -224,9 +224,9 @@
           </v-col>
         </v-row>
       </v-container>
-    </template>
+    </template> -->
 
-    <template #content-3>
+    <!-- <template #content-3>
       <shop-default-labor-rates />
     </template>
 
@@ -260,7 +260,7 @@
           </v-col>
         </v-row>
       </v-container>
-    </template>
+    </template> -->
   </custom-tabs>
 </template>
 
@@ -268,6 +268,9 @@
 import { onMounted, ref, watch, computed, nextTick } from 'vue';
 import CustomTabs from '@/shared/components/CustomTabs.vue';
 import CustomBtn from '@/shared/components/CustomBtn.vue';
+
+// API Configuration
+const apiUrl = import.meta.env.VITE_API_URL;
 import GenericForm from '@/shared/forms/GenericForm.vue';
 import GenericFormCols from '@/components/GenericFormCols.vue';
 import { useStore } from 'vuex';
@@ -291,16 +294,16 @@ const tabs = ref([
   {
     title: 'Shop Logo',
   },
-  {
-    title: 'Shop Admin',
-    genericFormsCount: 1,
-  },
-  {
-    title: 'Shop Default Labor Rates',
-  },
-  {
-    title: 'Shop RO Settings',
-  },
+  // {
+  //   title: 'Shop Admin',
+  //   genericFormsCount: 1,
+  // },
+  // {
+  //   title: 'Shop Default Labor Rates',
+  // },
+  // {
+  //   title: 'Shop RO Settings',
+  // },
 ]);
 const shopDetailsFieldConfig = ref([
   {
@@ -308,8 +311,8 @@ const shopDetailsFieldConfig = ref([
     config: [
       {
         id: 'shopName',
-        vModel: 'shopName',
-        name: 'shopName',
+        vModel: 'name', // Changed from 'shopName' to 'name'
+        name: 'name',
         label: 'Shop Name',
         strongLabel: true,
         bgColor: 'secondary',
@@ -318,8 +321,8 @@ const shopDetailsFieldConfig = ref([
       },
       {
         id: 'shopPhone',
-        vModel: 'phone1',
-        name: 'shopPhone',
+        vModel: 'phone', // Changed from 'phone1' to 'phone'
+        name: 'phone',
         label: 'Shop Phone',
         type: 'phoneNumber',
         strongLabel: true,
@@ -330,7 +333,7 @@ const shopDetailsFieldConfig = ref([
       {
         id: 'shopEmail',
         vModel: 'email',
-        name: 'shopEmail',
+        name: 'email',
         label: 'Shop Email',
         strongLabel: true,
         bgColor: 'secondary',
@@ -339,7 +342,7 @@ const shopDetailsFieldConfig = ref([
       {
         id: 'shopWebsite',
         vModel: 'website',
-        name: 'shopWebsite',
+        name: 'website',
         label: 'Shop Website',
         strongLabel: true,
         bgColor: 'secondary',
@@ -357,9 +360,9 @@ const shopDetailsFieldConfig = ref([
     config: [
       {
         id: 'address',
-        vModel: 'address',
-        name: 'address',
-        label: 'Address',
+        vModel: 'street', // Changed from 'address' to 'street'
+        name: 'street',
+        label: 'Street Address', // Updated label
         strongLabel: true,
         bgColor: 'secondary',
         cols: 12,
@@ -369,7 +372,7 @@ const shopDetailsFieldConfig = ref([
         id: 'city',
         vModel: 'city',
         name: 'city',
-        label: 'city',
+        label: 'City',
         strongLabel: true,
         bgColor: 'secondary',
         cols: 12,
@@ -437,11 +440,11 @@ const shopDetailsFieldConfig = ref([
         bgColor: 'secondary',
         type: 'select',
         items: [
-          'Eastern Standard Time (EST) / Eastern Daylight Time (EDT) - UTC -5 / UTC -4',
-          'Central Standard Time (CST) / Central Daylight Time (CDT) - UTC -6 / UTC -5',
-          'Mountain Standard Time (MST) / Mountain Daylight Time (MDT) - UTC -7 / UTC -6',
-          'Pacific Standard Time (PST) / Pacific Daylight Time (PDT) - UTC -8 / UTC -7',
-          'Hawaii-Aleutian Standard Time - Honolulu (GMT-10)',
+          'America/New_York',    // EST/EDT
+          'America/Chicago',     // CST/CDT  
+          'America/Denver',      // MST/MDT
+          'America/Los_Angeles', // PST/PDT
+          'Pacific/Honolulu',    // HST
         ],
         listProps: {
           minWidth: '700px',
@@ -479,7 +482,7 @@ const shopDetailsFieldConfig = ref([
 const shopAdminFieldConfig = ref([
   {
     id: 'adminContactName',
-    vModel: 'adminContactName',
+    vModel: 'adminName', // Changed to match admin.name
     label: 'Admin Contact Name',
     strongLabel: true,
     bgColor: 'secondary',
@@ -488,8 +491,8 @@ const shopAdminFieldConfig = ref([
     required: true,
   },
   {
-    id: 'adminContactPhone#',
-    vModel: 'adminContactPhone',
+    id: 'adminContactPhone',
+    vModel: 'adminPhone', // Changed to match admin.phone
     label: 'Admin Contact Phone#',
     strongLabel: true,
     bgColor: 'secondary',
@@ -500,7 +503,7 @@ const shopAdminFieldConfig = ref([
   },
   {
     id: 'adminEmail',
-    vModel: 'adminEmail',
+    vModel: 'adminEmail', // Changed to match admin.email
     label: 'Admin Email',
     strongLabel: true,
     bgColor: 'secondary',
@@ -592,27 +595,81 @@ const logoImageType = computed(() => {
 
 const fetchData = async (forceFetch = false) => {
   isLoading.value = true;
-  const data = await store.dispatch('fetchShopDetails', forceFetch);
-  if (isEmpty(data)) {
-    return handleError(error);
+  try {
+    const data = await store.dispatch('fetchShopDetails', forceFetch);
+    if (isEmpty(data)) {
+      return handleError(new Error('No data received'));
+    }
+    
+    // Map the nested API response to flat structure for form fields
+    const mappedData = {
+      // Basic shop info
+      name: data.name,
+      shopId: data.shopId,
+      shopLogo: data.logo,
+      
+      // Contact info (from contact object)
+      phone: data.contact?.phone,
+      email: data.contact?.email,
+      website: data.contact?.website,
+      
+      // Address info (from address object)
+      street: data.address?.street,
+      city: data.address?.city,
+      state: data.address?.state,
+      zipCode: data.address?.zipCode,
+      country: data.address?.country,
+      
+      // Settings info (from settings object)
+      timeZone: data.settings?.timeZone,
+      dateFormat: data.settings?.dateFormat,
+      timeFormat: data.settings?.timeFormat,
+      
+      // Admin info (from admin object)
+      adminName: data.admin?.name,
+      adminPhone: data.admin?.phone,
+      adminEmail: data.admin?.email,
+    };
+    
+    shopProfileDetails.value = mappedData;
+    isLoading.value = false;
+  } catch (error) {
+    handleError(error);
+    isLoading.value = false;
   }
-  shopProfileDetails.value = data;
-  // shopProfileDetails.value.dateFormat = new Date(data.dateFormat)
-  //   .toISOString()
-  //   .slice(0, 10);
-  isLoading.value = false;
 };
 const uploadShopDetails = async (payload, removeLogo = false, tabIdx) => {
   isLoading.value = true;
   try {
-    payload.removeLogo = removeLogo;
-    payload.phone1 = formatPhoneNumberToDigit(payload.phone1);
-    payload.phone2 = formatPhoneNumberToDigit(payload.phone2);
-    // Send as raw JSON for shop details
-    const response = await store.dispatch(
-      'updateShopDetails',
-      payload // pass plain object
-    );
+    // Structure the payload to match API expected format
+    const structuredPayload = {
+      name: payload.name,
+      contact: {
+        phone: formatPhoneNumberToDigit(payload.phone),
+        email: payload.email,
+        website: payload.website,
+      },
+      address: {
+        street: payload.street,
+        city: payload.city,
+        state: payload.state,
+        zipCode: payload.zipCode,
+        country: payload.country,
+      },
+      settings: {
+        timeZone: payload.timeZone,
+        dateFormat: payload.dateFormat,
+        timeFormat: payload.timeFormat,
+      },
+      admin: {
+        name: payload.adminName,
+        phone: formatPhoneNumberToDigit(payload.adminPhone),
+        email: payload.adminEmail,
+      },
+      removeLogo: removeLogo,
+    };
+
+    const response = await store.dispatch('updateShopDetails', structuredPayload);
     if (!response.success) {
       showErrorToast('Not Saved');
       return;

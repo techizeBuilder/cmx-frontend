@@ -372,7 +372,7 @@ const panels = ref([
     component: shallowRef(APIGateway),
   },
   {
-    title: 'RO Custom Settings',
+    title: 'Custom Settings',
     icon: 'ROCustomSettings.png',
     component: shallowRef(ROCustomSettings),
   },

@@ -14,6 +14,8 @@ import Comments from './ROCustomSettingTabs/Comments.vue';
 import ESignature from './ROCustomSettingTabs/ESignature.vue';
 import ChatLinkMessages from './ROCustomSettingTabs/ChatLinkMessages.vue';
 import ROCustomColor from './ROCustomSettingTabs/ROCustomColor.vue';
+import ShopDefaultLaborRates from './ROCustomSettingTabs/ShopDefaultLaborRates.vue';
+import ShopROSettings from './ROCustomSettingTabs/ShopROSettings.vue';
 
 const currentTab = ref(1);
 const tabs = ref([
@@ -36,6 +38,14 @@ const tabs = ref([
   {
     title: 'RO Custom Color',
     component: shallowRef(ROCustomColor),
+  },
+  {
+    title: 'Shop Default Labor Rates',
+    component: shallowRef(ShopDefaultLaborRates),
+  },
+  {
+    title: 'Shop RO Settings',
+    component: shallowRef(ShopROSettings),
   },
 ]);
 </script>
