@@ -1,3 +1,4 @@
+<!-- shop profile -->
 <template>
   <custom-tabs
     v-model="currentTab"
