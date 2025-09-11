@@ -1,0 +1,336 @@
+section.topFolderxLink {
+  filter: drop-shadow(0px 4.42px 4.42px rgba(0, 0, 0, 0.25));
+}
+section.topFolderxLink .EstimLi {
+  background-color: #e6f0ff;
+  padding: 2px 14px 4px;
+}
+section.topFolderxLink .EstimLi a {
+  color: #434343;
+  font-size: 13.261px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  text-decoration: underline !important;
+  text-wrap: nowrap;
+}
+section.topFolderxLink .EstimLi a:hover {
+  color: #434343;
+}
+.paymentHeadEstimate {
+  color: #434343;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  text-decoration-line: underline;
+  margin-bottom: 2px;
+}
+.PaymentBox .paymentHead {
+  color: #434343;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  text-decoration-line: underline;
+  margin-bottom: 2px;
+}
+.paymentContentEstpro {
+  margin: 0 1px;
+  width: 100%;
+}
+
+.paymentContentDeckEstimateX {
+  background-color: #e6f0ff;
+  border: 1px solid #e6f0ff;
+  background: #e6f0ff;
+  text-align: center;
+  padding: 7px 15px;
+  font-size: 15.406px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+}
+.paymentContentHeadEstimateX {
+  border: 1px solid #ffffff;
+  background: #ccdff0;
+  text-align: center;
+  padding: 0px 8px;
+  margin-bottom: 2px;
+  font-size: 12.605px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  height: 40px;
+  min-width: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.paymentContentEstpro:first-child .paymentContentHeadEstimateX {
+  border-radius: 5px 0px 0px 0px;
+}
+.paymentContentEstpro:first-child .paymentContentDeckEstimateX {
+  border-radius: 0px 0px 0px 5px;
+}
+.paymentContentEstpro:last-child .paymentContentHeadEstimateX {
+  border-radius: 0px 5px 0px 0px;
+}
+.paymentContentEstpro:last-child .paymentContentDeckEstimateX {
+  border-radius: 0px 0px 5px 0px;
+}
+.paymentContentEstpro .paymentContentDeckEstimateX {
+  border: 1px solid #ffffff;
+  background: #e6f0ff;
+  text-align: center;
+  padding: 7px 15px;
+  font-size: 15.406px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+}
+.PaymentBox {
+  overflow-x: auto;
+}
+.table-responsive.estimateAnn .table > :not(caption) > * > * {
+  padding: 0.3rem 0.5rem;
+}
+
+.table-responsive.detialsAnna .table > :not(caption) > * > * {
+  padding: 0.3rem 0.5rem;
+}
+
+.table-responsive.detialsAnna .table {
+  border-color: #ffffff;
+}
+.table-responsive.detialsAnna .table tbody tr th,
+.table-responsive.detialsAnna .table tbody tr td {
+  background-color: #e6f0ff;
+  border: 3px solid #ffffff;
+}
+.table-responsive.estimateAnn .table tbody tr th,
+.table-responsive.estimateAnn .table tbody tr td {
+  background-color: #ccdff0;
+  border: 3px solid #ffffff;
+}
+.table-responsive.detialsAnna {
+  border-radius: 5px;
+  border: 3px solid #fcfcfc;
+  background: #e6f0ff;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  margin-bottom: 7px;
+}
+.table-responsive.estimateAnn {
+  border-radius: 5px;
+  border: 3px solid #fcfcfc;
+  background: #e6f0ff;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  margin-bottom: 7px;
+}
+
+.detialsAnnaHead {
+  color: #ff8100;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  text-decoration-line: underline;
+  margin-bottom: 0;
+}
+.estimateAnnHead {
+  color: #434343;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  text-decoration-line: underline;
+  margin-bottom: 0;
+}
+.table-responsive.detialsAnna .table tbody tr th,
+.table-responsive.detialsAnna .table tbody tr td {
+  color: #000;
+  font-size: 12.605px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.table-responsive.detialsAnna .table tbody tr th {
+  font-weight: 600;
+}
+
+.myestimateprotable .table-striped > thead > tr > th {
+  background-color: #ccdff0;
+}
+.myestimateprotable .table-striped > tbody > tr:nth-of-type(odd) > * {
+  background-color: #e6f0ff;
+  box-shadow: none;
+}
+
+.table-responsive.myestimateprotable .table tr th {
+  color: #000;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  background-color: #ccdff0;
+}
+.table-responsive.myestimateprotable .table tbody tr td {
+  color: #000;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  background-color: #e6f0ff;
+}
+.table-responsive.myestimateprotable .table tbody tr td .form-select {
+  background-color: #fff;
+  border: none;
+  color: #000;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.table-responsive.myestimateprotable .table tbody tr td .form-select:focus {
+  box-shadow: none;
+}
+.table-responsive.myestimateprotable
+  .table
+  tbody
+  tr
+  td
+  .form-check-input[type="checkbox"] {
+  border-radius: 0.25em;
+  width: 20px;
+  height: 20px;
+}
+
+.table-responsive.myestimateprotable .table tbody tr td textarea#comment {
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+}
+
+/* dateXMain */
+.datexBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #e5e5e5;
+  border-radius: 5px;
+}
+.datexBox .form-check-input {
+  border: 1px solid #e5e5e5;
+  width: 20px;
+  height: 20px;
+  margin: 5px 5px 5px 14px;
+}
+.datexBox .form-select,
+.datexBox .form-control,
+.datexBox .flatpickr input.flatpickr-input {
+  border: none;
+  border-radius: 0;
+  border-left: 1px solid #e5e5e5;
+  padding: 6px 6px;
+}
+.datexBox .form-select:focus,
+.datexBox .form-control:focus {
+  box-shadow: none;
+}
+.datexlable {
+  color: #000;
+  text-align: left;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  margin-bottom: 4px;
+}
+.datexBox .flatpickr {
+  width: 100%;
+}
+.datexBox .flatpickr input.flatpickr-input {
+  width: 92%;
+}
+.datexBox .flatpickr input.flatpickr-input:focus {
+  box-shadow: none;
+}
+.datexBox .flatpickr input.flatpickr-input:focus-visible {
+  box-shadow: none;
+  outline: none;
+}
+.PayBoxAs {
+  flex: 1 1 auto !important;
+}
+.PaymentBox .paymentContent {
+  width: 100%;
+}
+/*.form-control, .form-select, .form-check-input{
+    border-radius: 5px;
+    border: 1px solid #636363; 
+}
+*/
+.vehScrool {
+  height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.inviteChatacco .chatimgx {
+  width: 25px;
+  height: 25px;
+}
+.shopadmindashboard
+  .right-sliderbarallpage
+  .link-section
+  .accordion-flush
+  .accordion-item.inviteChatacco {
+  border: none;
+  padding: 0px 0px 0px;
+}
+.shopadmindashboard
+  .right-sliderbarallpage
+  .link-section
+  .accordion-flush
+  .accordion-item.inviteChatacco
+  button:focus {
+  box-shadow: none;
+  outline: none;
+}
+input.dp__disabled.dp__input_readonly.dp__input.dp__input_icon_pad.dp__input_reg {
+  background-color: #e6f0ff;
+}
+@media only screen and (min-width: 1200px) {
+  .cutsomerRow .cutsomerCol {
+    padding: 0 4rem;
+  }
+  .stafRow .stafrCol {
+    padding: 0 4rem;
+  }
+}
+
+@media only screen and (min-width: 767px) {
+  .cutsomerRow {
+    padding: 0 0 4rem 0;
+  }
+
+  .cutsomerRow .cutsomerRowSec {
+    border-left: 1px solid #636363;
+    border-right: 1px solid #636363;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .PayBoxAs {
+    margin-top: 0.5rem;
+  }
+  .scrool-delevry .nav-tabs {
+    overflow-y: hidden;
+    overflow-x: auto;
+  }
+}
+@media only screen and (min-width: 576px) {
+  .FolderXSliderMain {
+    max-width: 170px;
+  }
+}

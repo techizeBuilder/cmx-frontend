@@ -1,0 +1,66 @@
+.PartsDrop ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.PartsDrop ul li{
+ 
+   border: 1px solid #D2D4D7;
+background: #FFF;
+box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+.partsXpages{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.partsacc{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 6rem;
+}
+.partsAccod:after {
+    position: absolute;
+    background-image: url('../Icons/arrow.png') !important;
+    left: 3.5rem;
+}
+.PartsDrop .sidebar-icon {
+    height: 20px;
+    width: 20px;
+}
+.partsTsx{
+ 
+    background: #FFF;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    margin: 0;
+    position: absolute;
+    width: 40px;
+    text-align: center;
+    left: 0;
+    height: 40px;
+    vertical-align: middle;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+}
+
+.PartsDrop .li-drop  .accordion-item{
+padding-left: 0px !important;
+padding-right: 0px !important;
+}
+.accordion-button.partsAccod {
+    background-color: transparent;
+    box-shadow: none;
+}
+.paBox{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 5px 0;
+    padding: 5px 15px;
+    border: 1.832px solid #D2D4D7;
+    background: #FBFCFF;
+    box-shadow: 0 2.443px 2.443px #00000040;
+}
