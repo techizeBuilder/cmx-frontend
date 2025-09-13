@@ -278,9 +278,13 @@ import { useStore } from 'vuex';
 import { isArray, isEmpty, isEqual } from 'lodash';
 import { handleError } from '@/handleError';
 import { showErrorToast, showSuccessToast } from '@/toster';
+import { formatPhoneNumberToDigit } from '@/composables';
+import axios from 'axios';
 import ShopDefaultLaborRates from '@/components/ShopAdmin/ShopDefaultLaborRates.vue';
 
 const store = useStore();
+const shopId = localStorage.getItem('shopIdStr');
+const authToken = localStorage.getItem('authToken');
 const uploadedLogo = ref(null);
 const shopProfileFormRefs = ref(null);
 const disableForm = ref([true, true, true, true, true]); // One per tab
@@ -642,45 +646,55 @@ const fetchData = async (forceFetch = false) => {
 const uploadShopDetails = async (payload, removeLogo = false, tabIdx) => {
   isLoading.value = true;
   try {
-    // Structure the payload to match API expected format
-    const structuredPayload = {
-      name: payload.name,
-      contact: {
-        phone: formatPhoneNumberToDigit(payload.phone),
-        email: payload.email,
-        website: payload.website,
-      },
-      address: {
-        street: payload.street,
-        city: payload.city,
-        state: payload.state,
-        zipCode: payload.zipCode,
-        country: payload.country,
-      },
-      settings: {
-        timeZone: payload.timeZone,
-        dateFormat: payload.dateFormat,
-        timeFormat: payload.timeFormat,
-      },
-      admin: {
-        name: payload.adminName,
-        phone: formatPhoneNumberToDigit(payload.adminPhone),
-        email: payload.adminEmail,
-      },
-      removeLogo: removeLogo,
+    const formData = new FormData();
+    
+    // Add shop details to FormData
+    formData.append('shopName', payload.name || '');
+    formData.append('shopPhone', formatPhoneNumberToDigit(payload.phone) || '');
+    formData.append('shopEmail', payload.email || '');
+    formData.append('shopWebsite', payload.website || '');
+    
+    // Add address details
+    formData.append('address', payload.street || '');
+    formData.append('city', payload.city || '');
+    formData.append('state', payload.state || '');
+    formData.append('zipCode', payload.zipCode || '');
+    formData.append('country', payload.country || '');
+    
+    // Add settings
+    formData.append('timeZone', payload.timeZone || '');
+    formData.append('dateFormat', payload.dateFormat || '');
+    formData.append('timeFormat', payload.timeFormat || '');
+    
+    // Add admin details
+    formData.append('adminName', payload.adminName || '');
+    formData.append('adminPhone', formatPhoneNumberToDigit(payload.adminPhone) || '');
+    formData.append('adminEmail', payload.adminEmail || '');
+
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'multipart/form-data'
+      }
     };
 
-    const response = await store.dispatch('updateShopDetails', structuredPayload);
-    if (!response.success) {
-      showErrorToast('Not Saved');
+    const response = await axios.put(`${apiUrl}/user/shops/${shopId}`, formData, config);
+    
+    if (!response.data.success) {
+      showErrorToast('Failed to update shop details');
       return;
     }
-    uploadedLogo.value = null;
+
     await fetchData(true);
-    showSuccessToast('Saved');
+    showSuccessToast('Shop details updated successfully');
     disableForm.value[tabIdx] = true;
   } catch (error) {
-    showErrorToast('Not Saved');
+    console.error('Error updating shop details:', error);
+    if (error.response?.data?.message) {
+      showErrorToast(error.response.data.message);
+    } else {
+      showErrorToast('Failed to update shop details');
+    }
   } finally {
     isLoading.value = false;
   }
@@ -688,24 +702,81 @@ const uploadShopDetails = async (payload, removeLogo = false, tabIdx) => {
 const uploadLogo = async (removeLogo = false, tabIdx = 1) => {
   isLoading.value = true;
   try {
-    const payload = shopProfileDetails.value;
     const formData = new FormData();
-    formData.append('removeLogo', removeLogo);
-    formData.append('shopId', payload.shopId);
-    if (uploadedLogo.value) {
-      formData.append('shopLogo', uploadedLogo.value);
+    
+    // Add logo file if uploading new logo
+    if (uploadedLogo.value && !removeLogo) {
+      formData.append('logo', uploadedLogo.value);
     }
-    const response = await store.dispatch('updateShopLogo', formData);
-    if (!response.success) {
-      // showErrorToast('Not Saved');
+
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    };
+
+    const response = await axios.put(`${apiUrl}/user/shops/${shopId}`, formData, config);
+    
+    if (!response.data.success) {
+      showErrorToast('Failed to update shop logo');
       return;
     }
+
     uploadedLogo.value = null;
     await fetchData(true);
-    showSuccessToast('Saved');
-    disableForm.value[tabIdx] = true; // Immediately switch to edit mode after save
+    showSuccessToast('Shop logo updated successfully');
+    disableForm.value[tabIdx] = true;
   } catch (error) {
-    // showErrorToast('Not Saved');
+    console.error('Error updating shop logo:', error);
+    if (error.response?.data?.message) {
+      showErrorToast(error.response.data.message);
+    } else {
+      showErrorToast('Failed to update shop logo');
+    }
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// Dedicated function for logo updates only
+const updateShopLogo = async (logoFile, tabIdx = 1) => {
+  isLoading.value = true;
+  try {
+    const formData = new FormData();
+    
+    if (logoFile) {
+      formData.append('logo', logoFile);
+    }
+
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    };
+
+    const response = await axios.put(`${apiUrl}/user/shops/${shopId}`, formData, config);
+    
+    if (!response.data.success) {
+      showErrorToast('Failed to update logo');
+      return false;
+    }
+
+    await fetchData(true);
+    showSuccessToast('Logo updated successfully');
+    if (tabIdx !== null) {
+      disableForm.value[tabIdx] = true;
+    }
+    return true;
+  } catch (error) {
+    console.error('Error updating logo:', error);
+    if (error.response?.data?.message) {
+      showErrorToast(error.response.data.message);
+    } else {
+      showErrorToast('Failed to update logo');
+    }
+    return false;
   } finally {
     isLoading.value = false;
   }
@@ -745,8 +816,38 @@ const createFormRefs = () => {
   }
 };
 const removeShopLogo = async () => {
-  uploadedLogo.value = null;
-  uploadLogo(true);
+  isLoading.value = true;
+  try {
+    const formData = new FormData();
+    // Just send an empty request to remove logo (API should handle logo removal when no logo field is provided)
+    
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    };
+
+    const response = await axios.put(`${apiUrl}/user/shops/${shopId}`, formData, config);
+    
+    if (!response.data.success) {
+      showErrorToast('Failed to remove shop logo');
+      return;
+    }
+
+    uploadedLogo.value = null;
+    await fetchData(true);
+    showSuccessToast('Shop logo removed successfully');
+  } catch (error) {
+    console.error('Error removing shop logo:', error);
+    if (error.response?.data?.message) {
+      showErrorToast(error.response.data.message);
+    } else {
+      showErrorToast('Failed to remove shop logo');
+    }
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 const tabContentRefs = [ref(null), ref(null), ref(null), ref(null), ref(null)];
@@ -797,21 +898,6 @@ function formatPhoneNumber(input) {
     }
   }
   return input;
-}
-
-function formatPhoneNumberToDigit(input) {
-  let phoneInput = input.replace(/\D+/g, '');
-  if (phoneInput.length >= 4 && phoneInput.length <= 6) {
-    return phoneInput.slice(0, 3) + phoneInput.slice(3);
-  } else if (phoneInput.length >= 7) {
-    return (
-      phoneInput.slice(0, 3) +
-      phoneInput.slice(3, 6) +
-      phoneInput.slice(6)
-    );
-  } else {
-    return phoneInput;
-  }
 }
 </script>
 
@@ -882,3 +968,4 @@ function formatPhoneNumberToDigit(input) {
   }
 }
 </style>
+

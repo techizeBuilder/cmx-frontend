@@ -45,7 +45,7 @@
               id="add-new-staff"
               color="accent"
               class="float-right"
-              to="/Shop_Profile/staff"
+              to="/Shop_Profile/add-staff"
             >
               Add New Staff
             </custom-btn>

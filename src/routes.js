@@ -66,6 +66,7 @@ import PartsXPage from './pages/PartsXPage.vue';
 import ChatLinkX from './pages/ChatLinkX.vue';
 import ShopAdmin from './pages/ShopAdmin.vue';
 import CreateUpdateStaffPage from './components/ShopAdmin/CreateUpdateStaff.vue';
+import AddNewStaffPage from './components/ShopAdmin/AddNewStaff.vue';
 import LoginPage from './pages/LoginPage.vue';
 import StaffPermissions from './components/StaffPermissions.vue';
 
@@ -111,6 +112,10 @@ const router = createRouter({
       component: ShopAdmin,
       meta: { header: 1, requiresAuth: true },
       children: [
+        {
+          path: 'add-staff',
+          component: AddNewStaffPage,
+        },
         {
           path: 'staff',
           component: CreateUpdateStaffPage,
