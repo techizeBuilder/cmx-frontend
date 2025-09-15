@@ -93,11 +93,7 @@
       }"
     >
       <custom-expansion-panel v-model="activePanels" :panels="panels">
-        <template
-          v-for="(panel, index) in panels"
-          :key="index"
-          #[`content-${index}`]
-        >
+        <template v-for="(panel, index) in panels" :key="index" #[`content-${index}`]>
           <custom-tabs
             v-model="panel.activeTab"
             :tabs="panel.tabs"
@@ -122,11 +118,7 @@
                   </v-col>
                   <v-col v-if="tab.showFullName" cols="6">
                     <span class="font-weight-600 text-h6">
-                      {{
-                        `${userDetails.firstName ?? ""} ${
-                          userDetails.lastName ?? ""
-                        }`
-                      }}
+                      {{ `${userDetails.firstName ?? ""} ${userDetails.lastName ?? ""}` }}
                     </span>
                   </v-col>
                   <v-col
@@ -148,7 +140,11 @@
                       :color="isFormDisabledArr[index] ? 'btn' : 'myGreen'"
                       :prepend-icon="isFormDisabledArr[index] ? 'edit' : 'save'"
                       :loading="isLoading"
-                      @click="isFormDisabledArr[index] ? (isFormDisabledArr[index] = false) : onSubmit()"
+                      @click="
+                        isFormDisabledArr[index]
+                          ? (isFormDisabledArr[index] = false)
+                          : onSubmit()
+                      "
                     >
                       {{ isFormDisabledArr[index] ? "Edit" : "Save" }}
                     </custom-btn>
@@ -232,10 +228,11 @@ const vuetifyDisplay = useDisplay();
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
+
 const props = defineProps({
   userId: {
-    type: [Number, String],
-    default: () => {},
+    type: [String],
+    default: null, // Default ko null karein
   },
 });
 
@@ -246,7 +243,10 @@ const isFormDisabled = ref(true);
 const isFormDirty = ref(false);
 const isLoading = ref(false);
 const updatedPayload = ref({});
-const registeredUserId = ref(props.userId || null);
+
+// registeredUserId ko seedhe route se lein, ye sabse reliable tareeka hai
+const registeredUserId = ref(route.params.userId || props.userId || null);
+
 const isFormDisabledArr = ref([true, true, true]);
 
 const STAFF_BUSINESS_DETAILS = {
@@ -339,6 +339,7 @@ const STAFF_BUSINESS_DETAILS = {
     },
   ],
 };
+
 const STAFF_PERSONAL_DETAILS = {
   title: "Staff Personal Details",
   formCols: 12,
@@ -493,7 +494,7 @@ const EMERGENCY_CONTACT = {
   md: 10,
   formsConfig: [
     {
-     cols: 4,
+      cols: 4,
       config: [
         {
           id: "emergencyContactFirstName",
@@ -510,7 +511,7 @@ const EMERGENCY_CONTACT = {
           label: "Emergency Contact Last Name ",
           strongLabel: true,
           bgColor: "secondary",
-            cols: 12,
+          cols: 12,
           md: 11,
         },
         {
@@ -519,7 +520,7 @@ const EMERGENCY_CONTACT = {
           label: "Emergency Contact Phone Cell 1",
           strongLabel: true,
           bgColor: "secondary",
-            cols: 12,
+          cols: 12,
           md: 11,
         },
         // {
@@ -545,7 +546,7 @@ const EMERGENCY_CONTACT = {
       cols: 1,
     },
     {
-      cols:4,
+      cols: 4,
       config: [
         // {
         //   id: 'emergencyContactFirstName',
@@ -793,9 +794,7 @@ const STAFF_NOTIFICATIONS = {
               listeners: {
                 "update:modelValue": (modelValue) => {
                   updatedPayload.value.notificationAccess = modelValue;
-                  updatedPayload.value.notification = modelValue
-                    ? USER_PERMISSIONS
-                    : [];
+                  updatedPayload.value.notification = modelValue ? USER_PERMISSIONS : [];
                 },
               },
             },
@@ -806,7 +805,7 @@ const STAFF_NOTIFICATIONS = {
   ],
 };
 const isPageUpdatingUser = computed(() => {
-  return !!props.userId;
+  return !!registeredUserId.value;
 });
 
 const STAFF_PERMISSIONS = {
@@ -839,15 +838,15 @@ const STAFF_PERMISSIONS = {
               colProps: {
                 class: "py-0",
               },
-             disabled: !isPageUpdatingUser.value && isFormDisabled,
-                // listeners: {
-                //   "update:modelValue": async (permissions) => {
-                //     updatedPayload.value.permissions = permissions;
-                //     if (isPageUpdatingUser.value) {
-                //       await updateUser(updatedPayload.value);
-                //     }
-                //   },
-                // },
+              disabled: !isPageUpdatingUser.value && isFormDisabled,
+              // listeners: {
+              //   "update:modelValue": async (permissions) => {
+              //     updatedPayload.value.permissions = permissions;
+              //     if (isPageUpdatingUser.value) {
+              //       await updateUser(updatedPayload.value);
+              //     }
+              //   },
+              // },
             },
             {
               id: "userCompanyEmail",
@@ -882,12 +881,8 @@ const STAFF_PERMISSIONS = {
               listeners: {
                 click: (e) => {
                   e.preventDefault();
-                  userDetails.value.userName = generateUserName(
-                    userDetails.value
-                  );
-                  updatedPayload.value.userName = generateUserName(
-                    userDetails.value
-                  );
+                  userDetails.value.userName = generateUserName(userDetails.value);
+                  updatedPayload.value.userName = generateUserName(userDetails.value);
                 },
               },
             },
@@ -953,14 +948,14 @@ const STAFF_PERMISSIONS = {
                 class: "py-0",
               },
               disabled: !isPageUpdatingUser.value && isFormDisabled,
-                listeners: {
-                  "update:modelValue": async (permissions) => {
-                    updatedPayload.value.permissions = permissions;
-                    if (isPageUpdatingUser.value) {
-                      await updateUser(updatedPayload.value);
-                    }
-                  },
+              listeners: {
+                "update:modelValue": async (permissions) => {
+                  updatedPayload.value.permissions = permissions;
+                  if (isPageUpdatingUser.value) {
+                    await updateUser(updatedPayload.value);
+                  }
                 },
+              },
             },
             {
               type: "switch",
@@ -976,15 +971,15 @@ const STAFF_PERMISSIONS = {
               colProps: {
                 class: "py-0",
               },
-           disabled: !isPageUpdatingUser.value && isFormDisabled,
-                listeners: {
-                  "update:modelValue": async (permissions) => {
-                    updatedPayload.value.permissions = permissions;
-                    if (isPageUpdatingUser.value) {
-                      await updateUser(updatedPayload.value);
-                    }
-                  },
+              disabled: !isPageUpdatingUser.value && isFormDisabled,
+              listeners: {
+                "update:modelValue": async (permissions) => {
+                  updatedPayload.value.permissions = permissions;
+                  if (isPageUpdatingUser.value) {
+                    await updateUser(updatedPayload.value);
+                  }
                 },
+              },
             },
             {
               type: "switch",
@@ -1000,15 +995,15 @@ const STAFF_PERMISSIONS = {
               colProps: {
                 class: "py-0",
               },
-            disabled: !isPageUpdatingUser.value && isFormDisabled,
-                listeners: {
-                  "update:modelValue": async (permissions) => {
-                    updatedPayload.value.permissions = permissions;
-                    if (isPageUpdatingUser.value) {
-                      await updateUser(updatedPayload.value);
-                    }
-                  },
+              disabled: !isPageUpdatingUser.value && isFormDisabled,
+              listeners: {
+                "update:modelValue": async (permissions) => {
+                  updatedPayload.value.permissions = permissions;
+                  if (isPageUpdatingUser.value) {
+                    await updateUser(updatedPayload.value);
+                  }
                 },
+              },
             },
             {
               type: "switch",
@@ -1024,15 +1019,15 @@ const STAFF_PERMISSIONS = {
               colProps: {
                 class: "py-0",
               },
-            disabled: !isPageUpdatingUser.value && isFormDisabled,
-                listeners: {
-                  "update:modelValue": async (permissions) => {
-                    updatedPayload.value.permissions = permissions;
-                    if (isPageUpdatingUser.value) {
-                      await updateUser(updatedPayload.value);
-                    }
-                  },
+              disabled: !isPageUpdatingUser.value && isFormDisabled,
+              listeners: {
+                "update:modelValue": async (permissions) => {
+                  updatedPayload.value.permissions = permissions;
+                  if (isPageUpdatingUser.value) {
+                    await updateUser(updatedPayload.value);
+                  }
                 },
+              },
             },
             {
               type: "switch",
@@ -1048,15 +1043,15 @@ const STAFF_PERMISSIONS = {
               colProps: {
                 class: "py-0",
               },
-            disabled: !isPageUpdatingUser.value && isFormDisabled,
-                listeners: {
-                  "update:modelValue": async (permissions) => {
-                    updatedPayload.value.permissions = permissions;
-                    if (isPageUpdatingUser.value) {
-                      await updateUser(updatedPayload.value);
-                    }
-                  },
+              disabled: !isPageUpdatingUser.value && isFormDisabled,
+              listeners: {
+                "update:modelValue": async (permissions) => {
+                  updatedPayload.value.permissions = permissions;
+                  if (isPageUpdatingUser.value) {
+                    await updateUser(updatedPayload.value);
+                  }
                 },
+              },
             },
             {
               type: "switch",
@@ -1072,15 +1067,15 @@ const STAFF_PERMISSIONS = {
               colProps: {
                 class: "py-0",
               },
-          disabled: !isPageUpdatingUser.value && isFormDisabled,
-                listeners: {
-                  "update:modelValue": async (permissions) => {
-                    updatedPayload.value.permissions = permissions;
-                    if (isPageUpdatingUser.value) {
-                      await updateUser(updatedPayload.value);
-                    }
-                  },
+              disabled: !isPageUpdatingUser.value && isFormDisabled,
+              listeners: {
+                "update:modelValue": async (permissions) => {
+                  updatedPayload.value.permissions = permissions;
+                  if (isPageUpdatingUser.value) {
+                    await updateUser(updatedPayload.value);
+                  }
                 },
+              },
             },
             {
               type: "divider",
@@ -1115,14 +1110,14 @@ const STAFF_PERMISSIONS = {
               //   },
               // },
               disabled: !isPageUpdatingUser.value && isFormDisabled,
-                listeners: {
-                  "update:modelValue": async (permissions) => {
-                    updatedPayload.value.permissions = permissions;
-                    if (isPageUpdatingUser.value) {
-                      await updateUser(updatedPayload.value);
-                    }
-                  },
+              listeners: {
+                "update:modelValue": async (permissions) => {
+                  updatedPayload.value.permissions = permissions;
+                  if (isPageUpdatingUser.value) {
+                    await updateUser(updatedPayload.value);
+                  }
                 },
+              },
             },
           ],
         },
@@ -1130,16 +1125,10 @@ const STAFF_PERMISSIONS = {
     },
   ],
 };
-const panels = ref([
-  STAFF_USER_DETAILS_CONFIG,
-  STAFF_PERMISSIONS,
-  STAFF_NOTIFICATIONS,
-]);
+const panels = ref([STAFF_USER_DETAILS_CONFIG, STAFF_PERMISSIONS, STAFF_NOTIFICATIONS]);
 
 const userFullName = computed(() => {
-  return `${userDetails.value.firstName ?? "-"} ${
-    userDetails.value.lastName ?? ""
-  }`;
+  return `${userDetails.value.firstName ?? "-"} ${userDetails.value.lastName ?? ""}`;
 });
 const shopDetails = computed(() => {
   return store.getters.getShopDetails ?? {};
@@ -1151,17 +1140,20 @@ const resetPage = () => {
   staffUserFormsRef.value?.resetForms();
 };
 const fetchUserDetails = async () => {
-  if (isPageUpdatingUser.value || registeredUserId.value) {
+  // Ab ye condition sahi se kaam karegi
+  if (isPageUpdatingUser.value) {
+    console.log("Condition is TRUE. Fetching user details for ID:", registeredUserId.value);
     const response = await store.dispatch(
       "fetchUserDetails",
-      registeredUserId.value || props.userId
+      registeredUserId.value
     );
     if (!response.data) {
       return handleError(response);
+    }else{
+      console.log('userDtails: ', response.data)
     }
     response.data.systemAccess = response.data?.permissions?.length === 6;
-    response.data.notificationAccess =
-      response.data?.notification?.length === 6;
+    response.data.notificationAccess = response.data?.notification?.length === 6;
     userDetails.value = response.data;
     updatedPayload.value = cloneDeep(userDetails.value);
     if (userDetails.value?.permissions) {
@@ -1171,12 +1163,7 @@ const fetchUserDetails = async () => {
     }
   }
 };
-const payloadUpdated = async ({
-  payload,
-  isDirty,
-  validate,
-  fieldsUpdated,
-}) => {
+const payloadUpdated = async ({ payload, isDirty, validate, fieldsUpdated }) => {
   if (Array.isArray(fieldsUpdated)) {
     fieldsUpdated.forEach((fc) => {
       updatedPayload.value[fc] = payload[fc];
@@ -1199,7 +1186,7 @@ const updateUser = async (payload) => {
   payload.email = updatedPayload.value.email || userDetails.value.email || "";
   const response = await store.dispatch("updateUserDetails", payload);
   if (!response.success) {
-    return showErrorToast('Error:',response.msg);
+    return showErrorToast("Error:", response.msg);
   }
   isLoading.value = false;
   await fetchUserDetails();
@@ -1207,15 +1194,13 @@ const updateUser = async (payload) => {
   isFormDisabled.value = true;
   // userDetails.value = {};
   // updatedPayload.value = {};
+  // router.push('/Shop_Profile'); 
 };
 const createUser = async () => {
   updatedPayload.value.shopId = store.getters.shopId;
   updatedPayload.value.email =
     updatedPayload.value.email || userDetails.value.email || "";
-  const response = await store.dispatch(
-    "createStaffUser",
-    updatedPayload.value
-  );
+  const response = await store.dispatch("createStaffUser", updatedPayload.value);
   if (!response.success) {
     return showErrorToast(response.error);
   }
@@ -1290,6 +1275,7 @@ onMounted(async () => {
   isLoading.value = true;
   await fetchUserDetails();
   isLoading.value = false;
+  console.log("userDetails hi", userDetails, updatedPayload.value);
 });
 </script>
 

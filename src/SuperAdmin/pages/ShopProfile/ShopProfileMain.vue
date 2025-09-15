@@ -15,6 +15,7 @@ let VehicleItem = [
     { name: 'Website', desc: '' },
     { name: 'Shop ID', desc: 'SXX12345' },
 ]
+
 </script>
 <template>
 

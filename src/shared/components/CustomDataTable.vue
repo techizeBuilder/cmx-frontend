@@ -217,6 +217,8 @@ import _, { cloneDeep, isBoolean, isEqual, merge } from 'lodash';
 import moment from 'moment';
 import { getImageUrl } from '@/composables';
 import CustomField from '@/shared/components/CustomField.vue';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
   components: {
@@ -521,6 +523,20 @@ export default {
     }
     this.selectedItems = this.modelValue;
   },
+
+  mounted() {
+  console.log('Component mounted. Table is ready.');
+
+  // Example: Log all item IDs
+  this.items.forEach(item => {
+    console.log(`Item ID:::::::::::::::::::::::::: ${item._id}`);
+  });
+
+  // You can also log selectedItems or currentPage
+  console.log('Current Page:', this.currentPage);
+  console.log('Selected Items:', this.selectedItems);
+}
+
 };
 </script>
 

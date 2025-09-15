@@ -742,21 +742,46 @@ const store = createStore({
       }
     },
 
-    async createStaffUser({ }, payload) {
+    // async createStaffUser({ }, payload) {
+    //   try {
+    //     const apiPayload = {
+    //       ...payload,
+    //     };
+    //     const response = await axios.post(
+    //       `/user/register`,
+    //       apiPayload
+    //     );
+    //     return response.data;
+    //   } catch (error) {
+    //     console.error(error, 'error');
+    //     return { error, success: false };
+    //   }
+    // },
+
+    async createStaffUser({ rootGetters }, payload) {
       try {
-        const apiPayload = {
-          ...payload, 
-        };
+        const token = rootGetters.getAuthToken;
+
         const response = await axios.post(
-          `/user/register`,
-          apiPayload
+          `/user/add-staff`,
+          payload,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
         );
-        return response.data;
+
+        return { success: true, data: response.data, msg: "Staff created" };
       } catch (error) {
-        console.error(error, 'error');
-        return { error, success: false };
+        return {
+          success: false,
+          error: error.response?.data?.message || "API Error",
+        };
       }
     },
+
 
     async fetchAllCommentsForShopAdmin({ state }) {
       try {
@@ -806,11 +831,11 @@ const store = createStore({
     },
   },
   getters: {
-    getUserId(state) {
-      return state.userId;
-    },
     shopId(state) {
       return state.shopId || localStorage.getItem("shopId");
+    },
+    getUserId(state) {
+      return state.userId;
     },
     getCuatomerId(state) {
       return state.customerId;

@@ -34,13 +34,13 @@
           { title: 'Shop Name:', value: shopDetails.name ?? '' },
           {
             title: 'Phone Number:',
-            value: formatPhoneNumber(shopDetails.contact.phone),
+            value: formatPhoneNumber(shopDetails.contact?.phone),
           },
-          { title: 'Address:', value: shopDetails.address.street ?? '' },
+          { title: 'Address:', value: shopDetails.address?.street ?? '' },
           {
             title: 'City, State, Zip:',
-            value: `${shopDetails.address.city ?? ''}, ${shopDetails.address.state ?? ''
-              }, ${shopDetails.address.zipCode ?? ''}`,
+            value: `${shopDetails.address?.city ?? ''}, ${shopDetails.address?.state ?? ''
+              }, ${shopDetails.address?.zipCode ?? ''}`,
           },
         ]"
       />

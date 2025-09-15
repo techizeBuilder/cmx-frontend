@@ -1,7 +1,7 @@
 <template>
   <v-row
     :class="{
-      'px-3': vuetifyDisplay.smAndUp.value
+      'px-3': vuetifyDisplay.smAndUp.value,
     }"
   >
     <page-header
@@ -14,23 +14,23 @@
       order-sm="0"
       class="mt-1"
       :class="{
-        'ml-2': $vuetify.display.xs
+        'ml-2': $vuetify.display.xs,
       }"
       hide-divider
       :subtitles="[
         {
           title: shopDetails.shopName,
-          to: route.matched[0].path
+          to: route.matched[0].path,
         },
         {
           title: 'New Staff Member',
-          to: route.path
-        }
+          to: route.path,
+        },
       ]"
       :title-props="{
         style: {
-          fontSize: '1.3rem'
-        }
+          fontSize: '1.3rem',
+        },
       }"
     />
 
@@ -43,7 +43,7 @@
       class="d-flex justify-end"
       :class="{
         'px-10': vuetifyDisplay.smAndUp.value,
-        'pb-0': vuetifyDisplay.xs.value
+        'pb-0': vuetifyDisplay.xs.value,
       }"
     >
       <custom-btn
@@ -61,15 +61,11 @@
       order="2"
       class="pt-0 mt-5"
       :class="{
-        'px-2': vuetifyDisplay.xs.value
+        'px-2': vuetifyDisplay.xs.value,
       }"
     >
       <custom-expansion-panel v-model="activePanels" :panels="panels">
-        <template
-          v-for="(panel, index) in panels"
-          :key="index"
-          #[`content-${index}`]
-        >
+        <template v-for="(panel, index) in panels" :key="index" #[`content-${index}`]>
           <custom-tabs
             v-model="panel.activeTab"
             :tabs="panel.tabs"
@@ -83,9 +79,7 @@
               <v-container fluid :class="tab.containerClass">
                 <v-row>
                   <v-col v-if="tab.showFullName" cols="6">
-                    <span class="font-weight-600 text-h6">
-                      New Staff Member
-                    </span>
+                    <span class="font-weight-600 text-h6"> New Staff Member </span>
                   </v-col>
                   <v-col
                     :cols="tab.showFullName ? 6 : 12"
@@ -106,11 +100,9 @@
                       :color="isFormDisabled ? 'btn' : 'myGreen'"
                       :prepend-icon="isFormDisabled ? 'edit' : 'save'"
                       :loading="isLoading"
-                      @click="
-                        isFormDisabled ? (isFormDisabled = false) : onSubmit()
-                      "
+                      @click="isFormDisabled ? (isFormDisabled = false) : onSubmit()"
                     >
-                      {{ isFormDisabled ? 'Edit' : 'Save' }}
+                      {{ isFormDisabled ? "Edit" : "Save" }}
                     </custom-btn>
                   </v-col>
 
@@ -137,274 +129,244 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
-import { useDisplay } from 'vuetify'
-import { cloneDeep } from 'lodash'
-import { showErrorToast, showSuccessToast } from '@/toster'
+import { ref, computed, onMounted } from "vue";
+import { useStore } from "vuex";
+import { useRoute, useRouter } from "vue-router";
+import { useDisplay } from "vuetify";
+import { cloneDeep } from "lodash";
+import { showErrorToast, showSuccessToast } from "@/toster";
 
 // Components
-import PageHeader from '@/components/PageHeader.vue'
-import CustomExpansionPanel from '@/shared/components/CustomExpansionPanel.vue'
-import CustomTabs from '@/shared/components/CustomTabs.vue'
-import CustomBtn from '@/shared/components/CustomBtn.vue'
-import GenericFormCols from '@/components/GenericFormCols.vue'
+import PageHeader from "@/components/PageHeader.vue";
+import CustomExpansionPanel from "@/shared/components/CustomExpansionPanel.vue";
+import CustomTabs from "@/shared/components/CustomTabs.vue";
+import CustomBtn from "@/shared/components/CustomBtn.vue";
+import GenericFormCols from "@/components/GenericFormCols.vue";
+
+const STAFF_TITLES = [
+  "CEO",
+  "Owner",
+  "NVP",
+  "RVP",
+  "COO",
+  "Director",
+  "Controller",
+  "Administrative",
+  "Accountant",
+  "Office",
+  "Shop Foreman",
+  "Shop Manager",
+  "Estimator",
+  "Parts",
+  "Body Technician",
+  "Frame Technician",
+  "Painter",
+  "Detailer Technician",
+  "Paint Prepper",
+  "Maintenance Technician",
+  "Parts Delivery Driver",
+  "Shop Helper",
+];
 
 // Composables
-const vuetifyDisplay = useDisplay()
-const router = useRouter()
-const route = useRoute()
-const store = useStore()
+const vuetifyDisplay = useDisplay();
+const router = useRouter();
+const route = useRoute();
+const store = useStore();
 
 // Reactive data
-const staffFormsRef = ref(null)
-const staffDetails = ref({})
-const activePanels = ref([])
-const isFormDisabled = ref(false) // Start with form enabled for new staff
-const isFormDirty = ref(false)
-const isLoading = ref(false)
-const updatedPayload = ref({})
+const staffFormsRef = ref(null);
+const staffDetails = ref({});
+const activePanels = ref([]);
+const isFormDisabled = ref(false); // Start with form enabled for new staff
+const isFormDirty = ref(false);
+const isLoading = ref(false);
+const updatedPayload = ref({});
 
 // Staff Personal Details Configuration
-const STAFF_PERSONAL_DETAILS = {
-  title: 'Staff Personal Details',
+const STAFF_BUSINESS_DETAILS = {
+  title: "Staff Business Details",
+  showEditBtn: true,
   formCols: 12,
-  md: 11,
-  showFullName: true,
+  md: 10,
   formsConfig: [
     {
-      cols: 3,
-      colProps: {
-        style: {
-          minWidth: '29.8% !important'
-        }
-      },
+      cols: 4,
       config: [
         {
-          id: 'staffPersonalPhone',
-          vModel: 'phone',
-          name: 'staffPersonalPhone',
-          label: 'Staff Personal Phone / Cell 1',
+          id: "staffFirstName",
+          vModel: "firstName",
+          name: "staffFirstName",
+          label: "Staff First Name",
           strongLabel: true,
-          bgColor: 'secondary',
-          cols: 12,
-          md: 11
-        },
-        {
-          id: 'staffPersonalPhone2',
-          vModel: 'phone2',
-          name: 'staffPersonalPhone2',
-          label: 'Extension #',
-          strongLabel: true,
-          bgColor: 'secondary',
-          cols: 12,
-          md: 11
-        },
-        {
-          id: 'staffPersonalEmailAddress',
-          vModel: 'email',
-          name: 'staffPersonalEmailAddress',
-          label: 'Staff Personal Email Address',
-          strongLabel: true,
-          bgColor: 'secondary',
+          bgColor: "secondary",
           cols: 12,
           md: 11,
-          required: true
-        }
-      ]
+          required: true,
+        },
+        {
+          id: "staffLastName",
+          vModel: "lastName",
+          name: "staffLastName",
+          label: "Staff Last Name",
+          strongLabel: true,
+          bgColor: "secondary",
+          cols: 12,
+          md: 11,
+          required: true,
+        },
+        {
+          id: "staffTitle",
+          vModel: "employeeTile",
+          label: "Employee Title",
+          type: "select",
+          items: STAFF_TITLES,
+          strongLabel: true,
+          bgColor: "secondary",
+          cols: 12,
+          md: 11,
+          required: true,
+        },
+      ],
     },
     {
       divider: true,
-      cols: 1
+      cols: 1,
     },
     {
-      cols: 3,
-      colProps: {
-        style: {
-          minWidth: '29.8% !important'
-        }
-      },
+      cols: 4,
       config: [
         {
-          id: 'homeAddress',
-          vModel: 'address',
-          name: 'homeAddress',
-          label: 'Home Address',
+          id: "staffBusinessPhone",
+          vModel: "phone",
+          name: "staffBusinessPhone",
+          label: "Staff Business Phone",
+          type: "phoneNumber",
           strongLabel: true,
-          bgColor: 'secondary',
+          bgColor: "secondary",
           cols: 12,
-          md: 11
+          md: 11,
+          required: true,
         },
         {
-          id: 'city',
-          vModel: 'city',
-          name: 'city',
-          label: 'City',
+          id: "staffBusinessPhone2",
+          vModel: "phone2",
+          name: "staffBusinessPhone2",
+          label: "Extension #",
+          type: "phoneNumber",
           strongLabel: true,
-          bgColor: 'secondary',
+          bgColor: "secondary",
           cols: 12,
-          md: 11
+          md: 11,
         },
         {
-          id: 'state',
-          vModel: 'state',
-          name: 'state',
-          label: 'State',
+          id: "staffBusinessEmailAddress",
+          vModel: "email",
+          name: "staffBusinessEmailAddress",
+          label: "Staff Business Email Address",
           strongLabel: true,
-          bgColor: 'secondary',
+          bgColor: "secondary",
           cols: 12,
-          md: 11
+          md: 11,
+          required: true,
         },
-        {
-          id: 'zipCode',
-          vModel: 'zipCode',
-          name: 'zipCode',
-          label: 'Zip Code',
-          strongLabel: true,
-          bgColor: 'secondary',
-          cols: 12,
-          md: 11
-        },
-        {
-          id: 'country',
-          vModel: 'country',
-          name: 'country',
-          label: 'Country',
-          strongLabel: true,
-          bgColor: 'secondary',
-          type: 'select',
-          items: ['USA', 'Canada', 'Mexico'], // Add country options
-          cols: 12,
-          md: 11
-        }
-      ]
+      ],
     },
-    {
-      divider: true,
-      cols: 1
-    },
-    {
-      cols: 3,
-      colProps: {
-        style: {
-          minWidth: '29.8% !important'
-        }
-      },
-      config: [
-        {
-          id: 'hireDate',
-          vModel: 'hireDate',
-          name: 'hireDate',
-          label: 'Hire Date',
-          type: 'date',
-          strongLabel: true,
-          bgColor: 'secondary',
-          cols: 12,
-          md: 11
-        },
-        {
-          id: 'separationDate',
-          vModel: 'terminationDate',
-          name: 'separationDate',
-          label: 'Separation Date',
-          type: 'date',
-          strongLabel: true,
-          bgColor: 'secondary',
-          cols: 12,
-          md: 11
-        }
-      ]
-    }
-  ]
-}
+  ],
+};
 
 // Panel configuration
 const STAFF_DETAILS_CONFIG = {
-  title: 'New Staff Details',
-  icon: 'staffSetup.png',
+  title: "New Staff Details",
+  icon: "staffSetup.png",
   activeTab: 1,
-  tabs: [STAFF_PERSONAL_DETAILS]
-}
+  tabs: [STAFF_BUSINESS_DETAILS],
+};
 
-const panels = ref([STAFF_DETAILS_CONFIG])
+const panels = ref([STAFF_DETAILS_CONFIG]);
 
 // Computed properties
 const shopDetails = computed(() => {
-  return store.getters.getShopDetails ?? {}
-})
+  return store.getters.getShopDetails ?? {};
+});
 
 // Methods
 const resetPage = () => {
-  staffDetails.value = {}
-  updatedPayload.value = {}
-  isFormDisabled.value = false
-  staffFormsRef.value?.resetForms()
-}
+  staffDetails.value = {};
+  updatedPayload.value = {};
+  isFormDisabled.value = false;
+  staffFormsRef.value?.resetForms();
+};
 
 const cancelForm = () => {
-  resetPage()
-  isFormDisabled.value = true
-}
+  resetPage();
+  isFormDisabled.value = true;
+};
 
 const payloadUpdated = ({ payload, isDirty, validate, fieldsUpdated }) => {
   if (Array.isArray(fieldsUpdated)) {
-    fieldsUpdated.forEach(fc => {
-      updatedPayload.value[fc] = payload[fc]
-    })
+    fieldsUpdated.forEach((fc) => {
+      updatedPayload.value[fc] = payload[fc];
+    });
   }
-  isFormDirty.value = isDirty
-}
+  isFormDirty.value = isDirty;
+};
 
 const createStaff = async () => {
   try {
-    updatedPayload.value.shopId = store.getters.shopId
+    // ✅ Get shopIdStr from localStorage
+    const shopIdStr = localStorage.getItem("shopIdStr") || "S00001"; // fallback if not found
 
-    const response = await store.dispatch(
-      'createStaffUser',
-      updatedPayload.value
-    )
+    const allowedFields = ["firstName", "lastName", "email", "phone", "employeeTile"];
 
-    if (!response.success) {
-      return showErrorToast(response.error || 'Failed to create staff member')
+    const filteredPayload = allowedFields.reduce(
+      (acc, key) => {
+        if (updatedPayload.value[key]) {
+          acc[key] = updatedPayload.value[key];
+        }
+        return acc;
+      },
+      { shopId: shopIdStr } // ✅ Inject shopId from localStorage
+    );
+
+    console.log("Filtered payload:", filteredPayload); // Confirm shopId is correct
+
+    const response = await store.dispatch("createStaffUser", filteredPayload);
+
+    if (response.success) {
+      showSuccessToast("Staff created successfully");
+      router.push("/Shop_Profile");
+    } else {
+      showErrorToast(response.error || "Failed to create staff");
     }
-
-    showSuccessToast(response.msg || 'Staff member created successfully')
-
-    // Reset form after successful creation
-    resetPage()
-    isFormDisabled.value = true
-
-    // Optional: Navigate back to staff list
-    // router.push({ name: 'staff-list' });
   } catch (error) {
-    console.error('Error creating staff:', error)
-    showErrorToast('An error occurred while creating the staff member')
+    console.error("API error:", error.response?.data || error.message);
+    showErrorToast(error.response?.data?.message || "Unexpected error occurred");
   }
-}
+};
 
 const onSubmit = async () => {
   try {
-    const isFormValid = await staffFormsRef.value.validateForm()
+    const isFormValid = await staffFormsRef.value.validateForm();
 
     if (isFormValid) {
-      isLoading.value = true
-      await createStaff()
+      isLoading.value = true;
+      await createStaff();
     }
   } catch (error) {
-    console.error('Form validation error:', error)
-    showErrorToast('Please check the form for errors')
+    console.error("Form validation error:", error);
+    showErrorToast("Please check the form for errors");
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 // Lifecycle
 onMounted(() => {
   // Initialize with empty staff details for new staff
-  staffDetails.value = {}
-  updatedPayload.value = {}
-})
+  staffDetails.value = {};
+  updatedPayload.value = {};
+});
 </script>
 
 <style lang="scss">
