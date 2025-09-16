@@ -79,7 +79,8 @@
             title: 'Staff Name:',
             value: userFullName,
           },
-          { title: 'Staff ID:', value: userId?.slice(0, 6) ?? '-' },
+          { title: 'Staff ID:', value: registeredUserId?.slice(0, 8) ?? '-' },
+          // { title: 'Staff ID:', value: userId?.slice(0, 6) ?? '-' },
         ]"
       />
     </v-col>
@@ -94,11 +95,7 @@
     >
       <custom-expansion-panel v-model="activePanels" :panels="panels">
         <template v-for="(panel, index) in panels" :key="index" #[`content-${index}`]>
-          <custom-tabs
-            v-model="panel.activeTab"
-            :tabs="panel.tabs"
-            @update:modelValue="resetPage"
-          >
+          <custom-tabs v-model="panel.activeTab" :tabs="panel.tabs">
             <template
               v-for="(tab, tabIdx) in panel.tabs"
               :key="tabIdx"
@@ -130,8 +127,8 @@
                       id="cancel-btn"
                       color="btn"
                       prepend-icon="cancel"
-                      :disabled="isLoading"
-                      @click="isFormDisabledArr[index] = true"
+                      :disabled="isLoading || !isFormDirty"
+                      @click="cancelForm(index)"
                     >
                       Cancel
                     </custom-btn>
@@ -156,7 +153,7 @@
                         v-if="panel.activeTab === tabIdx + 1"
                         ref="staffUserFormsRef"
                         :data="userDetails"
-                        :disabled="isFormDisabled || isLoading"
+                        :disabled="isFormDisabledArr[index] || isLoading"
                         :forms-config="tab.formsConfig"
                         @update:payload="payloadUpdated"
                       />
@@ -236,7 +233,7 @@ const props = defineProps({
   },
 });
 
-const staffUserFormsRef = ref(null);
+const staffUserFormsRef = ref([]);
 const userDetails = ref({});
 const activePanels = ref([]);
 const isFormDisabled = ref(true);
@@ -599,7 +596,8 @@ const STAFF_USER_DETAILS_CONFIG = {
   icon: "staffSetup.png",
   activeTab: 1,
   // component: shallowRef(ShopProfile),
-  tabs: [STAFF_BUSINESS_DETAILS, STAFF_PERSONAL_DETAILS, EMERGENCY_CONTACT],
+
+  tabs: [STAFF_BUSINESS_DETAILS, EMERGENCY_CONTACT],
 };
 const STAFF_NOTIFICATIONS = {
   title: "Staff Notifications",
@@ -1134,23 +1132,30 @@ const shopDetails = computed(() => {
   return store.getters.getShopDetails ?? {};
 });
 
-const resetPage = () => {
+const cancelForm = (index) => {
+  isFormDisabledArr.value[index] = true;
   updatedPayload.value = cloneDeep(userDetails.value);
-  isFormDisabled.value = true;
-  staffUserFormsRef.value?.resetForms();
+  if (staffUserFormsRef.value) {
+    const forms = Array.isArray(staffUserFormsRef.value)
+      ? staffUserFormsRef.value
+      : [staffUserFormsRef.value];
+    forms.forEach((form) => form?.resetForms());
+  }
+  isFormDirty.value = false;
 };
+
 const fetchUserDetails = async () => {
   // Ab ye condition sahi se kaam karegi
   if (isPageUpdatingUser.value) {
-    console.log("Condition is TRUE. Fetching user details for ID:", registeredUserId.value);
-    const response = await store.dispatch(
-      "fetchUserDetails",
+    console.log(
+      "Condition is TRUE. Fetching user details for ID:",
       registeredUserId.value
     );
+    const response = await store.dispatch("fetchUserDetails", registeredUserId.value);
     if (!response.data) {
       return handleError(response);
-    }else{
-      console.log('userDtails: ', response.data)
+    } else {
+      console.log("userDtails: ", response.data);
     }
     response.data.systemAccess = response.data?.permissions?.length === 6;
     response.data.notificationAccess = response.data?.notification?.length === 6;
@@ -1163,6 +1168,7 @@ const fetchUserDetails = async () => {
     }
   }
 };
+
 const payloadUpdated = async ({ payload, isDirty, validate, fieldsUpdated }) => {
   if (Array.isArray(fieldsUpdated)) {
     fieldsUpdated.forEach((fc) => {
@@ -1180,22 +1186,70 @@ const payloadUpdated = async ({ payload, isDirty, validate, fieldsUpdated }) => 
     updatedPayload.value.allPermissions = false;
   }
 };
+
 const updateUser = async (payload) => {
   isLoading.value = true;
-  payload.userId = registeredUserId.value || props.userId;
-  payload.email = updatedPayload.value.email || userDetails.value.email || "";
-  const response = await store.dispatch("updateUserDetails", payload);
+
+  // As requested, filter the payload to only include fields that can be updated.
+  // This is based on the reference from `AddNewStaff.vue`.
+  const allowedFields = [
+    "firstName",
+    "lastName",
+    "employeeTile",
+    "phone",
+    "phone2",
+    "email",
+    "address",
+    "city",
+    "state",
+    "zipCode",
+    "country",
+    "hireDate",
+    "terminationDate",
+    "emergencyContactFirstName",
+    "emergencyContactLastName",
+    "emergencyContactPhone",
+    "emergencyContactPhone2",
+    "relationship",
+    "permissions",
+    "systemAccess",
+    "userName",
+    "password",
+    "notification",
+    "notificationAccess",
+    "activeStatue",
+  ];
+
+  const filteredPayload = {};
+  for (const key of allowedFields) {
+    // Only include the field if it exists in the payload from the form.
+    if (Object.prototype.hasOwnProperty.call(payload, key)) {
+      filteredPayload[key] = payload[key];
+    }
+  }
+
+  // Add mandatory fields for the API call.
+  filteredPayload.userId = registeredUserId.value || props.userId;
+  filteredPayload.shopId = store.getters.shopId;
+  filteredPayload.email = payload.email || userDetails.value.email || "";
+  console.log("Edit payload: ", filteredPayload);
+  const response = await store.dispatch("updateStaffUser", filteredPayload);
   if (!response.success) {
-    return showErrorToast("Error:", response.msg);
+    isLoading.value = false;
+    return showErrorToast("Error:", response.msg || "Update failed");
   }
   isLoading.value = false;
   await fetchUserDetails();
-  showSuccessToast(response.msg);
+    console.log("Newly user ID:", response.message);
+  showSuccessToast(response.message);
   isFormDisabled.value = true;
+  isFormDisabledArr.value = isFormDisabledArr.value.map(() => true);
+  isFormDirty.value = false;
   // userDetails.value = {};
   // updatedPayload.value = {};
-  // router.push('/Shop_Profile'); 
+  router.push('/Shop_Profile');
 };
+
 const createUser = async () => {
   updatedPayload.value.shopId = store.getters.shopId;
   updatedPayload.value.email =
@@ -1207,14 +1261,31 @@ const createUser = async () => {
 
   registeredUserId.value = response.data?._id || response.data?.userId || null;
 
-  updatedPayload.value.userId = registeredUserId.value;
+  updatedPayload.value.userId = registeredUserId.value
   showSuccessToast(response.msg);
   isFormDisabled.value = true;
+  isFormDisabledArr.value = isFormDisabledArr.value.map(() => true);
   userDetails.value = {};
   updatedPayload.value = {};
 };
+
 const onSubmit = async () => {
-  const isFormValid = await staffUserFormsRef.value.validateForm();
+  if (!staffUserFormsRef.value) return;
+
+  const forms = Array.isArray(staffUserFormsRef.value)
+    ? staffUserFormsRef.value
+    : [staffUserFormsRef.value];
+
+  const formsToValidate = forms.filter((form) => form);
+  if (formsToValidate.length === 0) {
+    // No forms to validate, proceed if necessary or return
+    return;
+  }
+
+  const validationPromises = formsToValidate.map((form) => form.validateForm());
+  const validationResults = await Promise.all(validationPromises);
+  const isFormValid = validationResults.every((isValid) => isValid);
+
   if (isFormValid) {
     isLoading.value = true;
 
@@ -1225,8 +1296,8 @@ const onSubmit = async () => {
       await createUser();
     }
   }
-  isLoading.value = false;
 };
+
 const toggleUserStatus = async (value) => {
   if (userDetails.value.activeStatue !== value) {
     updateUser(updatedPayload.value);
@@ -1265,6 +1336,7 @@ watch(
   activePanels,
   () => {
     isFormDisabled.value = true;
+    isFormDisabledArr.value = isFormDisabledArr.value.map(() => true);
   },
   {
     deep: true,

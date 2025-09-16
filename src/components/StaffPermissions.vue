@@ -15,7 +15,7 @@
         <div class="modal-body">
           <div class="form-group">
             <label for="firstName">First Name *</label>
-            <input 
+            <input
               id="firstName"
               v-model="newStaff.firstName"
               type="text"
@@ -26,7 +26,7 @@
           </div>
           <div class="form-group">
             <label for="lastName">Last Name *</label>
-            <input 
+            <input
               id="lastName"
               v-model="newStaff.lastName"
               type="text"
@@ -37,7 +37,7 @@
           </div>
           <div class="form-group">
             <label for="email">Email *</label>
-            <input 
+            <input
               id="email"
               v-model="newStaff.email"
               type="email"
@@ -48,7 +48,7 @@
           </div>
           <div class="form-group">
             <label for="phone">Phone</label>
-            <input 
+            <input
               id="phone"
               v-model="newStaff.phone"
               type="tel"
@@ -58,23 +58,21 @@
           </div>
           <div class="form-group">
             <label for="employeeTitle">Role/Title *</label>
-            <select 
+            <select
               id="employeeTitle"
               v-model="newStaff.employeeTile"
               class="form-input"
               required
             >
               <option value="">Select Role</option>
-              <option v-for="title in EMPLOYEE_TITLES" 
-                      :key="title" 
-                      :value="title">
+              <option v-for="title in EMPLOYEE_TITLES" :key="title" :value="title">
                 {{ title }}
               </option>
             </select>
           </div>
           <div class="form-group">
             <label for="userName">Username *</label>
-            <input 
+            <input
               id="userName"
               v-model="newStaff.userName"
               type="text"
@@ -85,7 +83,7 @@
           </div>
           <div class="form-group">
             <label for="password">Password *</label>
-            <input 
+            <input
               id="password"
               v-model="newStaff.password"
               type="password"
@@ -98,10 +96,12 @@
         <div class="modal-footer">
           <div class="error-message" v-if="errorMessage">{{ errorMessage }}</div>
           <button class="modal-btn cancel" @click="closeModal">Cancel</button>
-          <button class="modal-btn submit" 
-                  @click="submitNewStaff"
-                  :disabled="!isFormValid || loading">
-            {{ loading ? 'Adding...' : 'Add Staff' }}
+          <button
+            class="modal-btn submit"
+            @click="submitNewStaff"
+            :disabled="!isFormValid || loading"
+          >
+            {{ loading ? "Adding..." : "Add Staff" }}
           </button>
         </div>
       </div>
@@ -109,31 +109,42 @@
 
     <div class="header card"><h1>STAFF PERMISSIONS</h1></div>
     <div class="shell">
-      <!-- Sidebar --> 
+      <!-- Sidebar -->
       <div class="team card">
         <div class="tools">
-          <input v-model="searchTerm" class="search" placeholder="Search staff…"/>
+          <input v-model="searchTerm" class="search" placeholder="Search staff…" />
           <select v-model="selectedType">
             <option value="All">All Staff Types</option>
-            <option v-for="type in STAFF_TYPES" :key="type" :value="type">{{ type }}</option>
+            <option v-for="module in MODULES" :key="module" :value="module">
+              {{ module }}
+            </option>
           </select>
           <div class="tools-row">
             <button @click="resetFilters" class="pillBtn">Reset</button>
-            <button @click="addStaffMember" class="pillBtn">+ Add</button>
+            <!-- <button @click="addStaffMember" class="pillBtn">+ Add</button> -->
           </div>
         </div>
-        <div class="muted" style="padding:8px 10px;font-size:12px">Select more than one staff member to apply batch permissions.</div>
+        <div class="muted" style="padding: 8px 10px; font-size: 12px">
+          Select more than one staff member to apply batch permissions.
+        </div>
         <div class="list">
-          <div v-for="member in filteredStaff" 
-               :key="member.id" 
-               :class="['user', { active: member.id === focusId, selected: member.selected }]"
-               @click="handleUserClick($event, member)">
-            <input type="checkbox" 
-                   :checked="member.selected"
-                   @change="toggleSelection($event, member)"
-                   :aria-label="'Select ' + member.name"/>
+          <div
+            v-for="member in filteredStaff"
+            :key="member.id"
+            :class="[
+              'user',
+              { active: member.id === focusId, selected: member.selected },
+            ]"
+            @click="handleUserClick($event, member)"
+          >
+            <input
+              type="checkbox"
+              :checked="member.selected"
+              @change="toggleSelection($event, member)"
+              :aria-label="'Select ' + member.firstName + ' ' + member.lastName"
+            />
             <div class="userMain">
-              <div class="name">{{ member.name }}</div>
+              <div class="name">{{ member.firstName }} {{ member.lastName }}</div>
               <div class="roleLine">
                 <span class="staffTypeLabel">Staff Type:</span>
                 <span class="staffTypeValue">{{ member.employeeTile }}</span>
@@ -145,18 +156,20 @@
         </div>
       </div>
 
-      <!-- Detail --> 
+      <!-- Detail -->
       <div class="detail card">
         <div class="bar">
           <div class="title">{{ selectedTitle }}</div>
           <div class="muted">{{ selectedNames }}</div>
-          <div style="flex:1"></div>
+          <div style="flex: 1"></div>
           <div class="pillRow">
             Quick set all:
-            <button v-for="level in LEVELS" 
-                    :key="level"
-                    class="pillBtn" 
-                    @click="setAllPermissions(level)">
+            <button
+              v-for="level in LEVELS"
+              :key="level"
+              class="pillBtn"
+              @click="setAllPermissions(level)"
+            >
               {{ level.charAt(0).toUpperCase() + level.slice(1) }}
             </button>
           </div>
@@ -166,21 +179,18 @@
           <table>
             <thead>
               <tr>
-                <th style="width:40%">Module</th>
-                <th v-for="level in LEVELS" 
-                    :key="level" 
-                    style="width:12%">
+                <th style="width: 40%">Module</th>
+                <th v-for="level in LEVELS" :key="level" style="width: 12%">
                   {{ level.charAt(0).toUpperCase() + level.slice(1) }}
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="module in MODULES" :key="module">
-                <td style="text-align:left;font-weight:600">{{ module }}</td>
+                <td style="text-align: left; font-weight: 600">{{ module }}</td>
                 <td v-for="level in LEVELS" :key="level">
-                  <button class="cellBtn" 
-                          @click="setPermissionLevel(module, level)">
-                    {{ getCurrentPermLevel(module) === level ? '✓' : '' }}
+                  <button class="cellBtn" @click="setPermissionLevel(module, level)">
+                    {{ getCurrentPermLevel(module) === level ? "✓" : "" }}
                   </button>
                 </td>
               </tr>
@@ -188,8 +198,9 @@
           </table>
         </div>
 
-        <div style="padding:8px 12px" class="muted">
-          Click a column to set the level for that module. Selected column shows a ✓ check.
+        <div style="padding: 8px 12px" class="muted">
+          Click a column to set the level for that module. Selected column shows a ✓
+          check.
         </div>
       </div>
     </div>
@@ -198,94 +209,127 @@
 
 <script>
 // Constants
-import { staffPermissionsService, EMPLOYEE_TITLES } from '../services/staffPermissionsService';
-import { showErrorToast } from '../toster';
+import {
+  staffPermissionsService,
+  EMPLOYEE_TITLES,
+} from "../services/staffPermissionsService";
+import { showErrorToast } from "../toster";
 
 // Constants for permission levels
-const PERMISSION_LEVELS = ['none', 'view', 'edit', 'manager', 'admin'];
+const PERMISSION_LEVELS = ["none", "view", "edit", "manager", "admin"];
 
 const MODULES = [
-  "Office-X", "Parts-X", "Repair Order", "Tech-X", "Customer Profile",
-  "Estimate Profile", "Vendor-X", "Accounts Receivable", "Shop Profile"
+  "Office-X",
+  "Parts-X",
+  "Repair Order",
+  "Tech-X",
+  "Customer Profile",
+  "Estimate Profile",
+  "Vendor-X",
+  "Accounts Receivable",
+  "Shop Profile",
 ];
 
-const LEVELS = ['none', 'view', 'edit', 'manager', 'admin'];
+const LEVELS = ["none", "view", "edit", "manager", "admin"];
 
 // Helper function to generate unique ID
 const uid = () => Math.random().toString(36).slice(2, 10);
 
 export default {
-  name: 'StaffPermissions',
+  name: "StaffPermissions",
   data() {
     return {
       EMPLOYEE_TITLES,
       MODULES,
+      LEVELS, // <-- Is line ko add karein
       PERMISSION_LEVELS,
       staff: [],
       focusId: null,
-      searchTerm: '',
-      selectedType: 'All',
+      searchTerm: "",
+      selectedType: "All",
       showAddModal: false,
       loading: false,
-      errorMessage: '',
-      shopId: localStorage.getItem('shopId') || JSON.parse(localStorage.getItem('shopProfile'))?.shopId?._id,
+      errorMessage: "",
+      shopId:
+        localStorage.getItem("shopId") ||
+        JSON.parse(localStorage.getItem("shopProfile"))?.shopId?._id,
       newStaff: {
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        employeeTile: '',
-        userName: '',
-        password: '',
-        permissions: this.createDefaultPermissions()
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        employeeTile: "",
+        userName: "",
+        password: "",
+        permissions: this.createDefaultPermissions(),
       },
-      userIconBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAVpJREFUWIXtlrFqAkEURTe9COliHbWwFAJ2FmlExH/QD9CQLum1FvwIU0X9ABFC7Oy1FSRE1JAmdXKHzMo47My+nZl1Lbxwmre8uafYXcbzziRXoA2mYBYzrKPFOw9h5b8npiUKTBMQmIgCswQE3i8COoEOaDimQxXYefFlTxHYxiiwcy1QANmkBO7BD/gGpVML+OX+DlXCiYBcHkXCWkBVTpWwEggrp0gYC1DLwySMBKKW6yQiC5QDyhegCr6EGfvD1cAqQOLORqAXUJ7hz5bSnOUWrKWdvo1ACrzx+VIoVwmw5MEHn8/BtY2AL/EIbqS5SoAlD56kcmMBVXQCqpAE9jEKiC+u9kLSBc0AigSBomK3K3UYXcmGBIER8awjgRfi0oggMCaeNRAF2MViQ1h6JQgMCed88s6jpEEF1DWItx+VQC7kjArvso7JV+A0z97/i8R4SELASf4AhFQARyVXnl8AAAAASUVORK5CYII='
-    }
+      userIconBase64:
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAVpJREFUWIXtlrFqAkEURTe9COliHbWwFAJ2FmlExH/QD9CQLum1FvwIU0X9ABFC7Oy1FSRE1JAmdXKHzMo47My+nZl1Lbxwmre8uafYXcbzziRXoA2mYBYzrKPFOw9h5b8npiUKTBMQmIgCswQE3i8COoEOaDimQxXYefFlTxHYxiiwcy1QANmkBO7BD/gGpVML+OX+DlXCiYBcHkXCWkBVTpWwEggrp0gYC1DLwySMBKKW6yQiC5QDyhegCr6EGfvD1cAqQOLORqAXUJ7hz5bSnOUWrKWdvo1ACrzx+VIoVwmw5MEHn8/BtY2AL/EIbqS5SoAlD56kcmMBVXQCqpAE9jEKiC+u9kLSBc0AigSBomK3K3UYXcmGBIER8awjgRfi0oggMCaeNRAF2MViQ1h6JQgMCed88s6jpEEF1DWItx+VQC7kjArvso7JV+A0z97/i8R4SELASf4AhFQARyVXnl8AAAAASUVORK5CYII=",
+    };
   },
   computed: {
     filteredStaff() {
-      return this.staff.filter(s => 
-        (this.selectedType === 'All' || s.employeeTile === this.selectedType) &&
-        (`${s.firstName} ${s.lastName} ${s.email}`.toLowerCase().includes(this.searchTerm.toLowerCase()))
+      return this.staff.filter(
+        (s) =>
+          (this.selectedType === "All" || s.employeeTile === this.selectedType) &&
+          `${s.firstName} ${s.lastName} ${s.email}`
+            .toLowerCase()
+            .includes(this.searchTerm.toLowerCase())
       );
     },
-    
+
     isFormValid() {
-      const { firstName, lastName, email, userName, password, employeeTile } = this.newStaff;
+      const {
+        firstName,
+        lastName,
+        email,
+        userName,
+        password,
+        employeeTile,
+      } = this.newStaff;
       return firstName && lastName && email && userName && password && employeeTile;
     },
     selectedStaff() {
-      return this.staff.filter(s => s.selected);
+      return this.staff.filter((s) => s.selected);
     },
     currentStaffMember() {
-      return this.staff.find(s => s.id === this.focusId);
+      return this.staff.find((s) => s.id === this.focusId);
     },
     selectedTitle() {
-      return this.selectedStaff.length > 1 ? '' : this.currentStaffMember?.name || '';
+      return this.selectedStaff.length > 1
+        ? ""
+        : `${this.currentStaffMember?.firstName || ""} ${
+            this.currentStaffMember?.lastName || ""
+          }`.trim();
     },
     selectedNames() {
-      if (this.selectedStaff.length <= 1) return '';
-      const names = this.selectedStaff.map(x => x.name).slice(0, 6).join(', ');
-      return `Selected: ${this.selectedStaff.length} — ${names}${this.selectedStaff.length > 6 ? '…' : ''}`;
-    }
+      if (this.selectedStaff.length <= 1) return "";
+      const names = this.selectedStaff
+        .map((x) => `${x.firstName} ${x.lastName}`)
+        .slice(0, 6)
+        .join(", ");
+      return `Selected: ${this.selectedStaff.length} — ${names}${
+        this.selectedStaff.length > 6 ? "…" : ""
+      }`;
+    },
   },
   methods: {
     canonicalType(role) {
-      const r = (role || '').toLowerCase();
-      if (r.includes('body')) return 'Body Technician';
-      if (r.includes('painter')) return 'Painter Technician';
-      if (r.includes('tech')) return 'Technician Other';
-      if (r.includes('production')) return 'Production';
-      if (r.includes('estimator')) return 'Estimator';
-      if (r.includes('parts')) return 'Parts';
-      if (r.includes('manager')) return 'Manager';
-      if (r.includes('admin')) return 'Admin';
-      if (r.includes('office')) return 'Office';
-      return 'Office';
+      const r = (role || "").toLowerCase();
+      if (r.includes("body")) return "Body Technician";
+      if (r.includes("painter")) return "Painter Technician";
+      if (r.includes("tech")) return "Technician Other";
+      if (r.includes("production")) return "Production";
+      if (r.includes("estimator")) return "Estimator";
+      if (r.includes("parts")) return "Parts";
+      if (r.includes("manager")) return "Manager";
+      if (r.includes("admin")) return "Admin";
+      if (r.includes("office")) return "Office";
+      return "Office";
     },
     createAllNonePerms() {
       const perms = {};
-      MODULES.forEach(m => perms[m] = 'none');
+      MODULES.forEach((m) => (perms[m] = "none"));
       return perms;
     },
     makeStaffMember(name, email, role) {
@@ -296,17 +340,17 @@ export default {
         role,
         type: this.canonicalType(role),
         selected: false,
-        perms: this.createAllNonePerms()
+        perms: this.createAllNonePerms(),
       };
     },
     resetFilters() {
-      this.searchTerm = '';
-      this.selectedType = 'All';
-      this.staff.forEach(s => s.selected = false);
+      this.searchTerm = "";
+      this.selectedType = "All";
+      this.staff.forEach((s) => (s.selected = false));
       this.focusId = this.staff[0]?.id;
     },
     handleUserClick(event, member) {
-      if (event.target.tagName !== 'INPUT') {
+      if (event.target.tagName !== "INPUT") {
         this.focusId = member.id;
       }
     },
@@ -314,45 +358,61 @@ export default {
       member.selected = event.target.checked;
     },
     setAllPermissions(level) {
-      if (!this.currentStaffMember) return;
-      MODULES.forEach(m => {
-        this.currentStaffMember.perms[m] = level;
+      // Agar koi bhi staff member select nahi hai, to kuch na karein
+      if (this.selectedStaff.length === 0) {
+        showErrorToast("Please select at least one staff member to apply permissions.");
+        return;
+      }
+
+      // Sabhi selected staff members ke permissions update karein
+      this.selectedStaff.forEach((staffMember) => {
+        MODULES.forEach((m) => {
+          staffMember.perms[m] = level;
+        });
       });
+
+      // **Ye line add karein**
+      // UI ko refresh karne ke liye, currentStaffMember ke permissions ko bhi update karein
+      if (this.currentStaffMember) {
+        this.currentStaffMember.perms = { ...this.currentStaffMember.perms };
+      }
     },
     setPermissionLevel(module, level) {
+      // Ye function focused user ke liye sahi kaam kar raha hai
       if (!this.currentStaffMember) return;
+      // Yahan bhi this.$set ko direct assignment se badlein
       this.currentStaffMember.perms[module] = level;
     },
     getCurrentPermLevel(module) {
-      return this.currentStaffMember?.perms[module] || 'none';
+      return this.currentStaffMember?.perms[module] || "none";
     },
     addStaffMember() {
       this.showAddModal = true;
     },
     async submitNewStaff() {
       if (!this.isFormValid) return;
-      
+
       this.loading = true;
-      this.errorMessage = '';
-      
+      this.errorMessage = "";
+
       try {
         const staffData = {
           ...this.newStaff,
-          shopId: this.shopId
+          shopId: this.shopId,
         };
-        
+
         const response = await staffPermissionsService.addStaffMember(staffData);
-        
+
         if (response.success) {
           await this.loadStaffMembers();
           this.closeModal();
           // Show success message using your toast system
-          this.$toast.success('Staff member added successfully');
+          this.$toast.success("Staff member added successfully");
         } else {
           this.errorMessage = response.message;
         }
       } catch (error) {
-        this.errorMessage = error.message || 'Failed to add staff member';
+        this.errorMessage = error.message || "Failed to add staff member";
         showErrorToast(this.errorMessage);
       } finally {
         this.loading = false;
@@ -364,28 +424,43 @@ export default {
       try {
         if (!this.shopId) {
           // Try to get shopId from store or other storage methods
-          this.shopId = localStorage.getItem('shopId') || 
-                       JSON.parse(localStorage.getItem('shopProfile'))?.shopId?._id;
-          
+          this.shopId =
+            localStorage.getItem("shopId") ||
+            JSON.parse(localStorage.getItem("shopProfile"))?.shopId?._id;
+
           if (!this.shopId) {
-            showErrorToast('Shop ID not found. Please log out and log in again.');
+            showErrorToast("Shop ID not found. Please log out and log in again.");
             return;
           }
         }
-        
-        console.log('Loading staff for shop:', this.shopId);
+
+        console.log("Loading staff for shop:", this.shopId);
         const response = await staffPermissionsService.getAllStaff(this.shopId);
         if (response.success) {
-          this.staff = response.data;
+          // API se aaye data ko process karein
+          this.staff = response.data.map((member) => {
+            // Har member ke liye 'perms' object ensure karein
+            // Agar API se 'permissions' ya 'perms' object aata hai, to use istemal karein, warna naya banayein
+            const perms =
+              member.permissions || member.perms || this.createDefaultPermissions();
+
+            return {
+              ...member,
+              id: member._id, // 'id' property ensure karein, kyunki component use istemal kar raha hai
+              selected: false, // 'selected' state ko initialize karein
+              perms: perms, // 'perms' object ko set karein
+            };
+          });
+
           if (this.staff.length > 0 && !this.focusId) {
-            this.focusId = this.staff[0]._id;
+            this.focusId = this.staff[0].id; // Ab 'id' istemal karein
           }
         } else {
-          showErrorToast(response.message || 'Failed to load staff members');
+          showErrorToast(response.message || "Failed to load staff members");
         }
       } catch (error) {
-        console.error('Staff loading error:', error);
-        showErrorToast('Failed to load staff members');
+        console.error("Staff loading error:", error);
+        showErrorToast("Failed to load staff members");
       } finally {
         this.loading = false;
       }
@@ -394,35 +469,41 @@ export default {
     async updatePermissions(staffId, permissions) {
       this.loading = true;
       try {
-        const response = await staffPermissionsService.updatePermissions(staffId, permissions);
+        const response = await staffPermissionsService.updatePermissions(
+          staffId,
+          permissions
+        );
         if (response.success) {
           await this.loadStaffMembers();
-          this.$toast.success('Permissions updated successfully');
+          this.$toast.success("Permissions updated successfully");
         } else {
           showErrorToast(response.message);
         }
       } catch (error) {
-        showErrorToast('Failed to update permissions');
+        showErrorToast("Failed to update permissions");
       } finally {
         this.loading = false;
       }
     },
 
     async batchUpdatePermissions(permissions) {
-      const selectedIds = this.selectedStaff.map(s => s._id);
+      const selectedIds = this.selectedStaff.map((s) => s._id);
       if (selectedIds.length === 0) return;
 
       this.loading = true;
       try {
-        const response = await staffPermissionsService.batchUpdatePermissions(selectedIds, permissions);
+        const response = await staffPermissionsService.batchUpdatePermissions(
+          selectedIds,
+          permissions
+        );
         if (response.success) {
           await this.loadStaffMembers();
-          this.$toast.success('Batch update completed successfully');
+          this.$toast.success("Batch update completed successfully");
         } else {
           showErrorToast(response.message);
         }
       } catch (error) {
-        showErrorToast('Failed to update permissions');
+        showErrorToast("Failed to update permissions");
       } finally {
         this.loading = false;
       }
@@ -430,31 +511,31 @@ export default {
 
     closeModal() {
       this.showAddModal = false;
-      this.errorMessage = '';
+      this.errorMessage = "";
       this.newStaff = {
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        employeeTile: '',
-        userName: '',
-        password: '',
-        permissions: this.createDefaultPermissions()
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        employeeTile: "",
+        userName: "",
+        password: "",
+        permissions: this.createDefaultPermissions(),
       };
     },
 
     createDefaultPermissions() {
       const permissions = {};
-      MODULES.forEach(module => {
-        permissions[module] = 'none';
+      MODULES.forEach((module) => {
+        permissions[module] = "none";
       });
       return permissions;
-    }
+    },
   },
   async created() {
     await this.loadStaffMembers();
-  }
-}
+  },
+};
 </script>
 
 <style>
@@ -470,7 +551,9 @@ export default {
   --rowAlt: #f2f7ff;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 .wrap {
   max-width: 1200px;
@@ -488,7 +571,7 @@ export default {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 0;
-  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .header {
@@ -710,7 +793,7 @@ input[type="checkbox"] {
   opacity: 1;
   z-index: 5;
   pointer-events: none;
-  filter: drop-shadow(0 0 1px rgba(0,0,0,.2));
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
 }
 
 /* Responsive Design */
@@ -851,8 +934,12 @@ input[type="checkbox"] {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .error-message {

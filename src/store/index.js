@@ -782,6 +782,18 @@ const store = createStore({
       }
     },
 
+    async updateStaffUser({ }, payload) {
+      try {
+        const { userId, ...data } = payload;
+        const response = await axios.put(
+          `/user/update-staff/${userId}`,
+          data
+        );
+        return response.data;
+      } catch (error) {
+        return handleError(error);
+      }
+    },
 
     async fetchAllCommentsForShopAdmin({ state }) {
       try {

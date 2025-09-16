@@ -39,8 +39,9 @@
           { title: 'Address:', value: shopDetails.address?.street ?? '' },
           {
             title: 'City, State, Zip:',
-            value: `${shopDetails.address?.city ?? ''}, ${shopDetails.address?.state ?? ''
-              }, ${shopDetails.address?.zipCode ?? ''}`,
+            value: `${shopDetails.address?.city ?? ''}, ${
+              shopDetails.address?.state ?? ''
+            }, ${shopDetails.address?.zipCode ?? ''}`,
           },
         ]"
       />
@@ -52,23 +53,14 @@
         'px-1': vuetifyDisplay.xs.value,
       }"
     >
-      <custom-expansion-panel
-        v-model="activePanels"
-        :panels="panels"
-      >
+      <custom-expansion-panel v-model="activePanels" :panels="panels">
       </custom-expansion-panel>
     </v-col>
   </v-row>
 
-  <create-update-staff
-    v-else
-    :user-id="route.params.userId"
-  />
+  <create-update-staff v-else :user-id="route.params.userId" />
   <!-- The Modal -->
-  <div
-    class="modal fade login-popup-dashtwo"
-    id="exampleModaladd"
-  >
+  <div class="modal fade login-popup-dashtwo" id="exampleModaladd">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body">
@@ -91,10 +83,7 @@
             </div>
             <div class="container">
               <div class="space-btm-space">
-                <div
-                  class="row"
-                  style="align-items: center"
-                >
+                <div class="row" style="align-items: center">
                   <div class="col-lg-6">
                     <div class="col-same">
                       <div class="box">
@@ -129,9 +118,7 @@
                     <div class="col-same">
                       <div class="box">
                         <form>
-                          <h4 class="headingrefer mb-3">
-                            Add a New Shop
-                          </h4>
+                          <h4 class="headingrefer mb-3">Add a New Shop</h4>
                           <div class="input-container mb-4">
                             <input
                               class="form-control"
@@ -168,18 +155,8 @@
                   </div>
                   <div class="col-12">
                     <div class="btn-btn d-flex justify-content-center gap-5">
-                      <button
-                        class="Cancel"
-                        type="button"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        class="submit"
-                        type="submit"
-                      >
-                        Submit
-                      </button>
+                      <button class="Cancel" type="button">Cancel</button>
+                      <button class="submit" type="submit">Submit</button>
                     </div>
                   </div>
                 </div>
@@ -190,10 +167,7 @@
       </div>
     </div>
   </div>
-  <div
-    class="modal fade login-popup-dashtwo"
-    id="exampleModalrefer"
-  >
+  <div class="modal fade login-popup-dashtwo" id="exampleModalrefer">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body">
@@ -216,10 +190,7 @@
             </div>
             <div class="container">
               <div class="space-btm-space">
-                <div
-                  class="row"
-                  style="align-items: center"
-                >
+                <div class="row" style="align-items: center">
                   <div class="col-lg-6">
                     <div class="col-same">
                       <div class="box">
@@ -254,9 +225,7 @@
                     <div class="col-same">
                       <div class="box">
                         <form>
-                          <h4 class="headingrefer mb-3">
-                            Refer a Shop
-                          </h4>
+                          <h4 class="headingrefer mb-3">Refer a Shop</h4>
                           <div class="input-container mb-4">
                             <input
                               class="form-control"
@@ -293,18 +262,8 @@
                   </div>
                   <div class="col-12">
                     <div class="btn-btn d-flex justify-content-center gap-5">
-                      <button
-                        class="Cancel"
-                        type="button"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        class="submit"
-                        type="submit"
-                      >
-                        Submit
-                      </button>
+                      <button class="Cancel" type="button">Cancel</button>
+                      <button class="submit" type="submit">Submit</button>
                     </div>
                   </div>
                 </div>
@@ -318,22 +277,22 @@
 </template>
 
 <script setup>
-import { onMounted, ref, shallowRef } from 'vue';
-import ShopProfile from '@/components/ShopAdmin/ShopProfile.vue';
-import PageHeader from '@/components/PageHeader.vue';
-import CustomKeyValuePair from '@/shared/components/CustomKeyValuePair.vue';
-import CustomExpansionPanel from '@/shared/components/CustomExpansionPanel.vue';
-import StaffSetup from '@/components/ShopAdmin/StaffSetup.vue';
-import CreateUpdateStaff from '@/components/ShopAdmin/CreateUpdateStaff.vue';
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
-import StaffPermissions from '@/components/StaffPermissions.vue';
-import StaffNotifications from '@/components/ShopAdmin/StaffNotifications.vue';
-import APIGateway from '@/components/ShopAdmin/APIGateway.vue';
-import ROCustomSettings from '@/components/ShopAdmin/ROCustomSettings.vue';
-import { useStore } from 'vuex';
-import { useDisplay } from 'vuetify';
-import { formatPhoneNumber } from '@/composables';
+import { onMounted, ref, shallowRef } from "vue";
+import ShopProfile from "@/components/ShopAdmin/ShopProfile.vue";
+import PageHeader from "@/components/PageHeader.vue";
+import CustomKeyValuePair from "@/shared/components/CustomKeyValuePair.vue";
+import CustomExpansionPanel from "@/shared/components/CustomExpansionPanel.vue";
+import StaffSetup from "@/components/ShopAdmin/StaffSetup.vue";
+import CreateUpdateStaff from "@/components/ShopAdmin/CreateUpdateStaff.vue";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import StaffPermissions from "@/components/StaffPermissions.vue";
+import StaffNotifications from "@/components/ShopAdmin/StaffNotifications.vue";
+import APIGateway from "@/components/ShopAdmin/APIGateway.vue";
+import ROCustomSettings from "@/components/ShopAdmin/ROCustomSettings.vue";
+import { useStore } from "vuex";
+import { useDisplay } from "vuetify";
+import { formatPhoneNumber } from "@/composables";
 
 const vuetifyDisplay = useDisplay();
 const store = useStore();
@@ -341,18 +300,18 @@ const route = useRoute();
 const activePanels = ref([]);
 const panels = ref([
   {
-    title: 'Shop Profile',
-    icon: 'storeProfile.png',
+    title: "Shop Profile",
+    icon: "storeProfile.png",
     component: shallowRef(ShopProfile),
   },
   {
-    title: 'Staff Setup',
-    icon: 'staffSetup.png',
+    title: "Staff Setup",
+    icon: "staffSetup.png",
     component: shallowRef(StaffSetup),
   },
   {
-    title: 'Staff Permissions',
-    icon: 'staffPermissions.png',
+    title: "Staff Permissions",
+    icon: "staffPermissions.png",
     iconProps: {
       maxWidth: 24,
       width: 24,
@@ -360,33 +319,33 @@ const panels = ref([
     component: shallowRef(StaffPermissions),
   },
   {
-    title: 'Staff Notifications',
-    icon: 'staffNotification.png',
-    minHeight:'700px',
+    title: "Staff Notifications",
+    icon: "staffNotification.png",
+    minHeight: "700px",
     component: shallowRef(StaffNotifications),
-  },    
+  },
   {
-    title: 'API Gateway',
-    icon: 'APIGateway.png',
-    minHeight:'650px',
+    title: "API Gateway",
+    icon: "APIGateway.png",
+    minHeight: "650px",
     component: shallowRef(APIGateway),
   },
   {
-    title: 'Custom Settings',
-    icon: 'ROCustomSettings.png',
+    title: "Custom Settings",
+    icon: "ROCustomSettings.png",
     component: shallowRef(ROCustomSettings),
   },
 ]);
 
 const showCreateUpdateStaffModule = computed(() => {
-  return !!route.fullPath.includes('staff');
+  return !!route.fullPath.includes("staff");
 });
 const shopDetails = computed(() => {
   return store.getters.getShopDetails;
 });
 
 onMounted(() => {
-  store.dispatch('fetchShopDetails');
+  store.dispatch("fetchShopDetails");
 });
 </script>
 
